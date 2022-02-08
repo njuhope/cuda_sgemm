@@ -91,9 +91,9 @@ __global__ void gemm_kernel_NN(
         valid_ld_b_1 = (valid_ld_b_1 && (i < K));
 
         ldg_a_reg[0] = (valid_ld_a_0) ? *(const float4*)(pA + i + 0) : f4_zero;
-        ldg_a_reg[1] = (valid_ld_a_0) ? *(const float4*)(pA + i + 64 * K) : f4_zero;
-        ldg_b_reg[0] = (valid_ld_a_0) ? *(const float4*)(pB + (i + 0) * N) : f4_zero;
-        ldg_b_reg[1] = (valid_ld_a_0) ? *(const float4*)(pB + (i + 8) * N) : f4_zero;
+        ldg_a_reg[1] = (valid_ld_a_1) ? *(const float4*)(pA + i + 64 * K) : f4_zero;
+        ldg_b_reg[0] = (valid_ld_b_0) ? *(const float4*)(pB + (i + 0) * N) : f4_zero;
+        ldg_b_reg[1] = (valid_ld_b_1) ? *(const float4*)(pB + (i + 8) * N) : f4_zero;
 
         int load_stage_idx = write_stage_idx ^ 1;
 
