@@ -42,8 +42,8 @@ __global__ void gemm_kernel_NN(
     int sts_b_offset = ty32 * TILE_X_4 + tx32;
 
     float4 f4_zero = make_float4(0.f, 0.f, 0.f, 0.f);
-    bool valid_ld_a_0 = ((blockIdx.y * TILE_Y + ty4) < M) && ((tx * 4) < K);
-    bool valid_ld_a_1 = ((blockIdx.y * TILE_Y + ty4 + 64) < M) && ((tx * 4) < K); 
+    bool valid_ld_a_0 = ((blockIdx.y * TILE_Y + ty4) < M) && ((tx4 * 4) < K);
+    bool valid_ld_a_1 = ((blockIdx.y * TILE_Y + ty4 + 64) < M) && ((tx4 * 4) < K); 
     bool valid_ld_b_0 = ((blockIdx.x * TILE_X + tx32 * 4) < N) && (ty32 < K);
     bool valid_ld_b_1 = ((blockIdx.x * TILE_X + tx32 * 4) < N) && ((ty32 + 8) < K);
 
@@ -85,10 +85,10 @@ __global__ void gemm_kernel_NN(
     do
     {
         i += 16;
-        valid_ld_a_0 = (valid_ld_a_0 && (i < K));
-        valid_ld_a_1 = (valid_ld_a_1 && (i < K));
-        valid_ld_b_0 = (valid_ld_b_0 && (i < K));
-        valid_ld_b_1 = (valid_ld_b_1 && (i < K));
+        valid_ld_a_0 = (valid_ld_a_0 && ((tx4 * 4 + i) < K));
+        valid_ld_a_1 = (valid_ld_a_1 && ((tx4 * 4 + i) < K));
+        valid_ld_b_0 = (valid_ld_b_0 && ((ty32 + i) < K));
+        valid_ld_b_1 = (valid_ld_b_1 && ((ty32 + 8 + i) < K));
 
         ldg_a_reg[0] = (valid_ld_a_0) ? *(const float4*)(pA + i + 0) : f4_zero;
         ldg_a_reg[1] = (valid_ld_a_1) ? *(const float4*)(pA + i + 64 * K) : f4_zero;
